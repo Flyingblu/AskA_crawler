@@ -23,17 +23,16 @@ def get_qs():
         tr_list = soup[0].find_all("tr")
         if not tr_list:
             break
-        data = tr_list[::2]
-        q_temp = []
-        for i in data:
-            try:
-                pprint(i.strong.get_text())
-            except AttributeError:
-                print("aaa")
-                pprint(i.get_text())
-            q_temp.append(Question(i.strong.get_text(), re.findall("\d{4}-\d{2}-\d{2}", i.get_text())[0]))
+
+        for piece in tr_list:
+            if piece.find_all(id="showDetail"):
+                q_body = piece.strong.get_text()
+                if q_body[-1] == '\n':
+                    q_body = q_body[:-2]
+                q_list.append(Question(q_body, re.findall("\d{4}-\d{2}-\d{2}", piece.get_text())[0]))
+
         cnt += 1
-        q_list += q_temp
+
     pprint(q_list)
 
 
