@@ -10,14 +10,22 @@ class Question:
     def __init__(self, q, date):
         self.body = q
         self.date = date
-        self.ans = None
 
     def __repr__(self):
-        return self.body + ' ' + self.date + '\n' + self.ans
+        return '# ' + self.body + ' ' + self.date + '\n'
+
+
+class Answer:
+    def __init__(self, ans):
+        self.body = ans
+
+    def __repr__(self):
+        return self.body + '\n'
 
 
 def get_qs():
     q_list = []
+    a_list = []
     cnt = 1
     while True:
         result = requests.get("https://app.xmu.edu.my/AskA/?p={0}&CategoryID=0".format(cnt))
@@ -38,13 +46,12 @@ def get_qs():
                 ans_str = ""
                 for div in answer:
                     ans_str += md(div)
-                tmp_q = q_list.pop()
-                tmp_q.ans = re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
-                                   flags=re.IGNORECASE).strip()
-                q_list.append(tmp_q)
+                a_list.append(Answer(re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
+                                            flags=re.IGNORECASE).strip()))
 
         cnt += 1
-    return json.dumps(q_list, default=lambda o: o.__dict__, indent=4)
+    return json.dumps(q_list, default=lambda o: o.__dict__, indent=4), json.dumps(a_list, default=lambda o: o.__dict__,
+                                                                                  indent=4)
 
 
 def to_markdown(q_list):
@@ -56,11 +63,12 @@ def to_markdown(q_list):
     file.close()
 
 
-def to_json_file(json_obj):
+def to_json_file(*json_obj):
     file = open("out.json", 'w')
-    file.write(json_obj)
+    for j in json_obj:
+        file.write(j)
     file.close()
 
 
 if __name__ == "__main__":
-    to_json_file(get_qs())
+    to_json_file(*get_qs())
