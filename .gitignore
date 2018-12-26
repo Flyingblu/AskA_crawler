@@ -1,2 +1,4 @@
 
 out.json
+*.xml
+.idea/AskA_crawler.iml

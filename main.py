@@ -8,24 +8,16 @@ import json
 
 class Question:
     def __init__(self, q, date):
-        self.body = q
+        self.title = q
         self.date = date
+        self.body = None
 
     def __repr__(self):
-        return '# ' + self.body + ' ' + self.date + '\n'
-
-
-class Answer:
-    def __init__(self, ans):
-        self.body = ans
-
-    def __repr__(self):
-        return self.body + '\n'
+        return '# ' + self.title + ' ' + self.date + '\n'
 
 
 def get_qs():
     q_list = []
-    a_list = []
     cnt = 1
     while True:
         result = requests.get("https://app.xmu.edu.my/AskA/?p={0}&CategoryID=0".format(cnt))
@@ -46,12 +38,13 @@ def get_qs():
                 ans_str = ""
                 for div in answer:
                     ans_str += md(div)
-                a_list.append(Answer(re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
-                                            flags=re.IGNORECASE).strip()))
+                tmp_q = q_list.pop()
+                tmp_q.body = re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
+                                            flags=re.IGNORECASE).strip()
+                q_list.append(tmp_q)
 
         cnt += 1
-    return json.dumps(q_list, default=lambda o: o.__dict__, indent=4), json.dumps(a_list, default=lambda o: o.__dict__,
-                                                                                  indent=4)
+    return json.dumps(q_list, default=lambda o: o.__dict__, indent=4)
 
 
 def to_markdown(q_list):
