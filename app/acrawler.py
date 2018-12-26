@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-from pprint import pprint
 import re
-from markdownify import markdownify as md
 import json
+from markdownify import markdownify as md
+
 
 
 class Question:
@@ -37,6 +37,7 @@ def get_qs():
                 answer = piece.find_all("div")
                 ans_str = ""
                 for div in answer:
+                    print(type(div))
                     ans_str += md(div)
                 tmp_q = q_list.pop()
                 tmp_q.body = re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
