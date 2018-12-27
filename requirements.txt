@@ -1,0 +1,6 @@
+requests
+markdownify
+lxml
+beautifulsoup4
+flask
+gunicorn
