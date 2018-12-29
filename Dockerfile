@@ -5,7 +5,7 @@ WORKDIR /home/crawler
 
 COPY . .
 RUN apk add --update --no-cache g++ gcc libxslt-dev==1.1.32-r0 \
-&& pip install -r requirements.txt\
+&& pip install -r requirements.txt \
 && apk del g++ gcc
 USER crawler
 EXPOSE 8000

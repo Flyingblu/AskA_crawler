@@ -2,8 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
-from markdownify import markdownify as md
-
+from datetime import datetime
 
 
 class Question:
@@ -32,15 +31,15 @@ def get_qs():
                 q_body = piece.strong.get_text()
                 if q_body[-1] == '\n':
                     q_body = q_body[:-2]
-                q_list.append(Question(q_body, re.findall("\d{4}-\d{2}-\d{2}", piece.get_text())[0]))
+                q_list.append(Question(q_body, datetime.strptime(re.findall("\d{4}-\d{2}-\d{2}", piece.get_text())[0], "%Y-%m-%d")))
             else:
                 answer = piece.find_all("div")
                 ans_str = ""
                 for div in answer:
-                    ans_str += md(div)
+                    ans_str += str(div)
                 tmp_q = q_list.pop()
                 tmp_q.body = re.sub(pattern="\(\/AskA\/", string=ans_str, repl="(https://app.xmu.edu.my/AskA/",
-                                            flags=re.IGNORECASE).strip()
+                                    flags=re.IGNORECASE).strip()
                 q_list.append(tmp_q)
 
         cnt += 1
